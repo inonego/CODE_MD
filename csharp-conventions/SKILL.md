@@ -16,6 +16,7 @@ BSD 스타일 (Allman). 여는 중괄호를 새 줄에 배치.
 
 - 클래스/인터페이스: `=` 구분선 60자 + XML `<summary>`
 - 메서드/프로퍼티: `-` 구분선 60자 + XML `<summary>`
+- **구분선 길이 조정**: 주석 내용이 긴 경우 구분선을 10자씩 추가 가능 (60 → 70 → 80...)
 - XML 문서 주석은 `<summary>`만 사용 (`<br/>` 허용)
 - 순서가 있는 주석이라도 번호를 붙이지 않음 (`// 1. 초기화` X → `// 초기화` O)
 
@@ -29,7 +30,8 @@ public class MyClass { }
 
 // ------------------------------------------------------------
 /// <summary>
-/// 메서드 설명
+/// <br/> 메서드 설명
+/// <br/> 여러줄인 경우 이렇게 작성 
 /// </summary>
 // ------------------------------------------------------------
 public void MyMethod() { }
@@ -43,18 +45,25 @@ System → Unity → 라이브러리 → 프로젝트 (그룹 간 빈 줄)
 
 ### 선언
 
-- 중간 단계 네임스페이스도 사용 여부와 관계없이 함께 선언
-- 현재 네임스페이스의 하위/동등 네임스페이스는 namespace 블록 **내부**에서 using
+- **순차적 선언 원칙**: 하위 네임스페이스를 사용하더라도 상위 네임스페이스를 순차적으로 모두 선언
+  - 예: `using System.Collections.Generic;`을 사용하는 경우 → `using System;`, `using System.Collections;`, `using System.Collections.Generic;` 순서로 작성
+- 현재 네임스페이스의 하위/동등 네임스페이스는 namespace 블록 **내부**에서 using (내부에서도 순차적 선언 원칙 적용)
 - 완전히 다른 네임스페이스는 파일 상단에서 using
 
 ```csharp
+// Collections.Generic만 사용하더라도 System, Collections를 순차적으로 선언
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
 
 namespace inonego
 {
+   // namespace 내부에서도 순차적 선언 원칙 적용
+   using Internal;
    using Internal.Namespace;  // inonego.Internal.Namespace → 내부이므로 namespace 안쪽
+   using Other;
    using Other.Sub;           // inonego.Other.Sub → 내부이므로 namespace 안쪽
 ```
 

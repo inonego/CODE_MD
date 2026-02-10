@@ -3,6 +3,7 @@
 전체 규칙을 적용한 제네릭 추상 클래스 예시.
 
 ```csharp
+// Collections.Generic만 사용하더라도 System, Collections를 순차적으로 선언
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,10 @@ using UnityEngine;
 
 namespace inonego
 {
+   // namespace 내부에서도 순차적 선언 원칙 적용
+   using Internal;
+   using Internal.Data;  // inonego.Internal.Data → 내부이므로 namespace 안쪽
+
    // ============================================================
    /// <summary>
    /// 인터페이스 설명
@@ -55,7 +60,7 @@ namespace inonego
       public GameObject Value
       {
          get => value;
-         set => value
+         set
          {
             // 필드 변경 시 이벤트 연동 및 초기화/해제 패턴
             var (prev, next) = (this.value, value);
@@ -74,7 +79,7 @@ namespace inonego
                // next에 대한 초기화 작업
             }
 
-            OnValueChange(new () { Value = next });
+            OnValueChange?.Invoke(this, new ValueChangeEventArgs { Value = 0 });
          }
       }
 
@@ -90,6 +95,8 @@ namespace inonego
 
       [SerializeField]
       private bool isActive = false;
+
+      // SerializeField가 없으면 위의 public 프로퍼티와 붙여쓰도록 할 것
 
    #endregion
 
@@ -140,9 +147,10 @@ namespace inonego
             throw new InvalidOperationException("값이 설정되어 있지 않습니다.");
          }
 
-         var spawnable = // ...
+         var spawnable = Instantiate(value);
+         var hasError = false;
 
-         if (condition)
+         if (hasError)
          {
             // 스폰 중에 예외가 발생하면 객체를 디스폰합니다.
             DespawnInternal(spawnable);
@@ -152,12 +160,23 @@ namespace inonego
          /// 스폰 처리
          // ------------------------------------------------------------
          OnBeforeSpawn(spawnable);
-         spawnable.OnBeforeSpawn();
+         spawnable.SetActive(true);
 
          // ------------------------------------------------------------
          /// 스폰 이벤트를 호출합니다.
          // ------------------------------------------------------------
-         OnSpawn?.Invoke(key, spawnable);
+         OnSpawnComplete?.Invoke(this, spawnable);
+      }
+
+      // ----------------------------------------------------------------------
+      /// <summary>
+      /// <br/> 주석 내용이 긴 경우 구분선을 10자씩 추가한 예시 (60 → 70자)
+      /// <br/> 여러 줄의 설명이 필요한 복잡한 메서드에 사용
+      /// </summary>
+      // ----------------------------------------------------------------------
+      public void ComplexMethodWithLongDescription()
+      {
+         // 복잡한 로직 구현
       }
 
    #endregion
