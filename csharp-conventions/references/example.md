@@ -3,8 +3,9 @@
 전체 규칙을 적용한 제네릭 추상 클래스 예시.
 
 ```csharp
-// Collections.Generic만 사용하더라도 System, Collections를 순차적으로 선언
+// Collections.Generic만 사용하더라도 System, Collections를 순차적으로 선언 (필수)
 using System;
+// 사용하지 않더라도 중간 네임스페이스 꼭 작성!
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -176,7 +177,41 @@ namespace inonego
       // ----------------------------------------------------------------------
       public void ComplexMethodWithLongDescription()
       {
-         // 복잡한 로직 구현
+         // ------------------------------------------------------------
+         /// 제어문 중괄호 필수 (단일 문장이라도 무조건 감싸기)
+         // ------------------------------------------------------------
+         var list = new List<int> { 1, 2, 3 };
+
+         // 잘못된 예시
+         // for (int i = 0; i < list.Count; i++) Debug.Log(list[i]);
+         for (int i = 0; i < list.Count; i++)
+         {
+            Debug.Log(list[i]);
+         }
+
+         // ------------------------------------------------------------
+         /// 매개변수가 많은 경우 호출 방식
+         // ------------------------------------------------------------
+         // 긴 변수명은 적당히 줄여서 사용 (의미를 유지하면서 간략하게)
+         var position = spawnPointObject.transform.position;
+         var rotation = spawnPointObject.transform.rotation;
+         var scale    = spawnPointObject.transform.localScale;
+
+         // 여러 줄이 되는 경우 괄호를 중괄호처럼 사용 (적당히 묶어서 표현)
+         LongParameterMethod
+         (
+            position, rotation, scale,
+            "Example Name", true, 100
+         );
+      }
+
+      private void LongParameterMethod
+      (
+         Vector3 position, Quaternion rotation, Vector3 scale,
+         string name, bool isActive, int count
+      )
+      {
+         // 구현 내용
       }
 
    #endregion
